@@ -1,0 +1,53 @@
+{% extends 'rpsls/base.html' %} {% load crispy_forms_tags %} {% block content %}
+
+<form action="{% url 'rpsls:new_game' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <h2 style="color:red">Nueva partida</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <div class="form-group">
+                <!--  <label for="user" style="color:whitesmoke">Jugador 1:</label> -->
+                {{player_form|crispy }}
+
+                <!-- <input id='user' type="text" class="form-control" placeholder="Ápodo" required></input> -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <div class="form-group">
+                <!--  <label for="game_id" style="color:whitesmoke">Sala:</label> -->
+                {{game_form|crispy }}
+
+                <!-- <input id='game_id' type="text" class="form-control" placeholder="Nombre de la partida" required></input> -->
+            </div>
+        </div>
+    </div>
+    <!--  <div class="row">
+        <div class="col col-md-6 offset-3">
+            <div class="form-group">
+                <label for="game_id" style="color:whitesmoke">Sala:</label>
+
+
+                <input id='test' type="text" name='test' class="form-control" placeholder="Nombre de la partida" value={{test}}></input>
+            </div>
+        </div>
+    </div> -->
+    <div class="row">
+        <div class="col col-md-7 offset-4">
+            <button class="btn btn-danger btn-lg" type="submit">Crear partida</button>
+            <!-- <button class="start-btn" style="width: auto; margin: 25px;">Crear partida</button> -->
+        </div>
+    </div>
+
+
+
+</form>
+
+
+{% endblock %}

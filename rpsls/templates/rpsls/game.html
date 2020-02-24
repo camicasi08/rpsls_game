@@ -1,0 +1,251 @@
+{% extends 'rpsls/base.html' %} {% load crispy_forms_tags %} {% block content %}
+
+<h3 class="text-center"><span style="color: whitesmoke;">Bienvenido a </span><span style="color:whitesmoke; font-weight: bold;">{{game.game_id}}</span></h3>
+<div class="row">
+    <div class="col col-md-8 offset-2">
+        <label id='creator' style="color: #c21111;">{% if game.creator%}{{game.creator}}{% endif%}</label>
+        <label style="color: whitesmoke;">VS</label>
+        <label id='opponent' style='color:royalblue'>{% if game.opponent%}{{game.opponent}}{% endif%}</label>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col col-md-2 offset-1">
+        <button class="btn btn-secondary btn-lg" id="btn-rock">Rock</button>
+    </div>
+    <div class="col col-md-2">
+        <button class="btn btn-secondary btn-lg" id="btn-paper">Paper</button>
+    </div>
+    <div class="col col-md-3">
+        <button class="btn btn-secondary btn-lg" id="btn-sci">Scissors</button>
+    </div>
+    <div class="col col-md-2">
+        <button class="btn btn-secondary btn-lg" id="btn-lizard">Lizard</button>
+    </div>
+    <div class="col col-md-2">
+        <button class="btn btn-secondary btn-lg" id="btn-spock">Spock</button>
+    </div>
+</div>
+<br>
+<div id='results' style="display: none;">
+    <div class="row">
+        <div class="col col-md-8 offset-2">
+            <label id='creator_selection' style="text-transform: uppercase;"></label>
+
+            <label>VS</label>
+
+
+            <label id='opponent_selection' style="text-transform: uppercase;"></label>
+
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            Ganador
+            <input id='winner' type="text" value="{{game.winner}}">
+            <!--  <h3 id='winner' value={{game.winner}}></h3> -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <button class="btn btn-danger">Cerrar partida</button>
+        </div>
+    </div>
+
+    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+<input id="chat-message-input" type="text" size="100" /><br/> -->
+    <!-- <input id="chat-message-submit" type="button" value="Send" /> -->
+
+    <script>
+        localStorage.clear()
+        document.addEventListener('keypress', logKey);
+
+        function logKey(e) {
+            console.log(e.code)
+        }
+
+        var roomName = "{{ game.id|escapejs }}";
+
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/chat/' + roomName + '/');
+
+        is_opponent = "{{opponent|escapejs}}"
+        is_creator = "{{creator|escapejs}}"
+
+        console.log(is_creator)
+        console.log(is_opponent)
+        chatSocket.onopen = function(e) {
+            if (is_opponent == 'True') {
+                console.log("SEND OP!");
+                //localStorage.setItem("player", "op");
+                chatSocket.send(JSON.stringify({
+                    "opponent": "{{player.nick_name|escapejs}}"
+                }))
+            }
+
+            if (is_creator == 'True') {
+                console.log("SEND CR!")
+                    //localStorage.setItem("player", "cr");
+                chatSocket.send(JSON.stringify({
+                    "creator": "{{player.nick_name|escapejs}}"
+                }))
+            }
+        }
+
+
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            var opponent = data['opponent'];
+            var creator = data['creator'];
+            $('#opponent').text(opponent);
+            $('#creator').text(creator);
+
+            if (data['creator_selection']) {
+                console.log("creator_selection")
+                localStorage.setItem("creator_selection", data['creator_selection'])
+            }
+
+            if (data['opponent_selection']) {
+                console.log("creator_selection")
+                localStorage.setItem("opponent_selection", data['opponent_selection'])
+            }
+
+            opponent_selection = localStorage.getItem('opponent_selection')
+            creator_selection = localStorage.getItem("creator_selection")
+
+            if ((opponent_selection != null && opponent_selection != undefined) && (creator_selection != null && creator_selection != undefined)) {
+                let creator = "{{game.creator|escapejs}}"
+                let opponent = "{{game.opponent|escapejs}}"
+                $('#creator_selection').text(creator_selection)
+                $('#opponent_selection').text(opponent_selection)
+                $('#results').show()
+                setTimeout(function() {
+                    winner = EvalGameWinner(creator_selection, creator, opponent_selection, opponent)
+                    $('#winner').text(winner)
+                    $('#winner').value(winner)
+                        //console.log(winner)
+                }, 500)
+
+
+            }
+
+            /*  document.querySelector('#chat-log').value += (message + '\n'); */
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#btn-rock').onclick = function(e) {
+
+            if (is_opponent == 'True') {
+                localStorage.setItem("opponent_selection", "rock")
+                chatSocket.send(JSON.stringify({
+                    "opponent_selection": "rock"
+                }))
+            }
+            if (is_creator == 'True') {
+                localStorage.setItem("creator_selection", "rock")
+                chatSocket.send(JSON.stringify({
+                    "creator_selection": "rock"
+                }))
+            }
+            //document.getElementById("btn-rock").disabled = true;
+            document.getElementById("btn-paper").disabled = true;
+            document.getElementById("btn-sci").disabled = true;
+            document.getElementById("btn-lizard").disabled = true;
+            document.getElementById("btn-spock").disabled = true;
+            //console.log(e)
+        }
+
+        document.querySelector('#btn-paper').onclick = function(e) {
+
+            if (is_opponent == 'True') {
+                localStorage.setItem("opponent_selection", "paper")
+                chatSocket.send(JSON.stringify({
+                    "opponent_selection": "paper"
+                }))
+            }
+            if (is_creator == 'True') {
+                localStorage.setItem("creator_selection", "paper")
+                chatSocket.send(JSON.stringify({
+                    "creator_selection": "paper"
+                }))
+            }
+            document.getElementById("btn-rock").disabled = true;
+            //document.getElementById("btn-paper").disabled = true;
+            document.getElementById("btn-sci").disabled = true;
+            document.getElementById("btn-lizard").disabled = true;
+            document.getElementById("btn-spock").disabled = true;
+            //console.log(e)
+        }
+        document.querySelector('#btn-sci').onclick = function(e) {
+
+            if (is_opponent == 'True') {
+                localStorage.setItem("opponent_selection", "scissors")
+                chatSocket.send(JSON.stringify({
+                    "opponent_selection": "scissors"
+                }))
+            }
+            if (is_creator == 'True') {
+                localStorage.setItem("creator_selection", "scissors")
+                chatSocket.send(JSON.stringify({
+                    "creator_selection": "scissors"
+                }))
+            }
+            document.getElementById("btn-rock").disabled = true;
+            document.getElementById("btn-paper").disabled = true;
+            //document.getElementById("btn-sci").disabled = true;
+            document.getElementById("btn-lizard").disabled = true;
+            document.getElementById("btn-spock").disabled = true;
+            //console.log(e)
+        }
+        document.querySelector('#btn-lizard').onclick = function(e) {
+
+            if (is_opponent == 'True') {
+                localStorage.setItem("opponent_selection", "lizard")
+                chatSocket.send(JSON.stringify({
+                    "opponent_selection": "lizard"
+                }))
+            }
+            if (is_creator == 'True') {
+                localStorage.setItem("creator_selection", "lizard")
+                chatSocket.send(JSON.stringify({
+                    "creator_selection": "lizard"
+                }))
+            }
+            document.getElementById("btn-rock").disabled = true;
+            document.getElementById("btn-paper").disabled = true;
+            document.getElementById("btn-sci").disabled = true;
+            //document.getElementById("btn-lizard").disabled = true;
+            document.getElementById("btn-spock").disabled = true;
+            //console.log(e)
+        }
+        document.querySelector('#btn-spock').onclick = function(e) {
+
+            if (is_opponent == 'True') {
+                localStorage.setItem("opponent_selection", "spock")
+                chatSocket.send(JSON.stringify({
+                    "opponent_selection": "spock"
+                }))
+            }
+            if (is_creator == 'True') {
+                localStorage.setItem("creator_selection", "spock")
+                chatSocket.send(JSON.stringify({
+                    "creator_selection": "spock"
+                }))
+            }
+            document.getElementById("btn-rock").disabled = true;
+            document.getElementById("btn-paper").disabled = true;
+            document.getElementById("btn-sci").disabled = true;
+            document.getElementById("btn-lizard").disabled = true;
+            //document.getElementById("btn-spock").disabled = true;
+            //console.log(e)
+        }
+    </script>
+
+    {% endblock %}

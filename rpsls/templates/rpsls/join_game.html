@@ -1,0 +1,47 @@
+{% extends 'rpsls/base.html' %} {% load crispy_forms_tags %} {% block content %} {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{message.tags}}" role="alert">
+        {{ message }}
+    </div>
+    <!-- <li{% if message.tags %} class="{{ message.tags }}" {% endif %}></li> -->
+    {% endfor %}
+</ul>
+{% endif %}
+<form action="{% url 'rpsls:join_game' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <div class="form-group">
+                <label for='game'>
+                   Partidas
+                </label>
+                <select class="form-control" id='game' name='game'>
+                    {% for game in games %}
+                        {% if not game.closed %}
+                            <option value="{{game.id}}">{{game.game_id}}</option>
+                        {% endif %}
+                    {% endfor%}
+                    </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-md-6 offset-3">
+            <div class="form-group">
+                <!--  <label for="user" style="color:whitesmoke">Jugador 1:</label> -->
+                {{player_form|crispy }}
+
+                <!-- <input id='user' type="text" class="form-control" placeholder="Ápodo" required></input> -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-md-7 offset-4">
+            <button class="btn btn-danger btn-lg" type="submit">Unirse a partida</button>
+            <!-- <button class="start-btn" style="width: auto; margin: 25px;">Crear partida</button> -->
+        </div>
+    </div>
+</form>
+{% endblock %}

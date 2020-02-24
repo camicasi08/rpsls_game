@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'rpsls/styles.css' %}">
+    <script src="{% static 'rpsls/js/game.js' %}"></script>
+    <title>
+        RPSLS-GAME
+    </title>
+
+    {# Cargamos la librería #} {% load bootstrap4 %} {# CSS Bootstrap #} {% bootstrap_css %}
+
+
+</head>
+
+<body class="custom-body">
+    <div class="container">
+        <br>
+        <a href="/rpsls/">
+            <div class="text-center">
+                <h1>ROCK PAPER</h1>
+                <h1>SCISSORS LIZARD</h1>
+                <h1> SPOCK </h1>
+            </div>
+        </a>
+        <br> {% block content %} {% endblock %} {% bootstrap_javascript jquery='full' %}
+
+        <!-- <button class="video-game-button">R</button>
+        <button class="video-game-button">P</button>
+        <button class="video-game-button">S</button>
+        <button class="video-game-button">L</button>
+        <button class="video-game-button">K</button> -->
+    </div>
+
+
+
+</body>
+
+</html>
