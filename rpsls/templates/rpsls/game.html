@@ -43,13 +43,13 @@
     </div>
     <div class="row">
         <div class="col col-md-6 offset-3">
-            Ganador
-            <input id='winner' type="text" value="{{game.winner}}">
-            <!--  <h3 id='winner' value={{game.winner}}></h3> -->
+
+            <!-- <input id=winner type="text" value="{{game.winner}}"> -->
+            <h3 id='winner' value={{game.winner}}>Ganador</h3>
         </div>
     </div>
     <div class="row">
-        <div class="col col-md-6 offset-3">
+        <div class="col col-md-6 offset-4">
             <button class="btn btn-danger">Cerrar partida</button>
         </div>
     </div>
@@ -125,7 +125,7 @@
                 $('#results').show()
                 setTimeout(function() {
                     winner = EvalGameWinner(creator_selection, creator, opponent_selection, opponent)
-                    $('#winner').text(winner)
+                    $('#winner').text($('#winner').text() + ' ' + winner)
                     $('#winner').value(winner)
                         //console.log(winner)
                 }, 500)
