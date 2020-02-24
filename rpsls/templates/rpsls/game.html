@@ -54,9 +54,6 @@
         </div>
     </div>
 
-    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
-<input id="chat-message-input" type="text" size="100" /><br/> -->
-    <!-- <input id="chat-message-submit" type="button" value="Send" /> -->
 
     <script>
         localStorage.clear()
@@ -68,20 +65,20 @@
 
         var roomName = "{{ game.id|escapejs }}";
 
-        var chatSocket = new WebSocket(
+        var gameSocket = new WebSocket(
             'ws://' + window.location.host +
-            '/ws/chat/' + roomName + '/');
+            '/ws/game/' + roomName + '/');
 
         is_opponent = "{{opponent|escapejs}}"
         is_creator = "{{creator|escapejs}}"
 
         console.log(is_creator)
         console.log(is_opponent)
-        chatSocket.onopen = function(e) {
+        gameSocket.onopen = function(e) {
             if (is_opponent == 'True') {
                 console.log("SEND OP!");
                 //localStorage.setItem("player", "op");
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent": "{{player.nick_name|escapejs}}"
                 }))
             }
@@ -89,14 +86,14 @@
             if (is_creator == 'True') {
                 console.log("SEND CR!")
                     //localStorage.setItem("player", "cr");
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator": "{{player.nick_name|escapejs}}"
                 }))
             }
         }
 
 
-        chatSocket.onmessage = function(e) {
+        gameSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
             var message = data['message'];
             var opponent = data['opponent'];
@@ -126,7 +123,7 @@
                 setTimeout(function() {
                     winner = EvalGameWinner(creator_selection, creator, opponent_selection, opponent)
                     $('#winner').text($('#winner').text() + ' ' + winner)
-                    $('#winner').value(winner)
+                        //$('#winner').value(winner)
                         //console.log(winner)
                 }, 500)
 
@@ -136,7 +133,7 @@
             /*  document.querySelector('#chat-log').value += (message + '\n'); */
         };
 
-        chatSocket.onclose = function(e) {
+        gameSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
@@ -144,13 +141,13 @@
 
             if (is_opponent == 'True') {
                 localStorage.setItem("opponent_selection", "rock")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent_selection": "rock"
                 }))
             }
             if (is_creator == 'True') {
                 localStorage.setItem("creator_selection", "rock")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator_selection": "rock"
                 }))
             }
@@ -166,13 +163,13 @@
 
             if (is_opponent == 'True') {
                 localStorage.setItem("opponent_selection", "paper")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent_selection": "paper"
                 }))
             }
             if (is_creator == 'True') {
                 localStorage.setItem("creator_selection", "paper")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator_selection": "paper"
                 }))
             }
@@ -187,13 +184,13 @@
 
             if (is_opponent == 'True') {
                 localStorage.setItem("opponent_selection", "scissors")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent_selection": "scissors"
                 }))
             }
             if (is_creator == 'True') {
                 localStorage.setItem("creator_selection", "scissors")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator_selection": "scissors"
                 }))
             }
@@ -208,13 +205,13 @@
 
             if (is_opponent == 'True') {
                 localStorage.setItem("opponent_selection", "lizard")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent_selection": "lizard"
                 }))
             }
             if (is_creator == 'True') {
                 localStorage.setItem("creator_selection", "lizard")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator_selection": "lizard"
                 }))
             }
@@ -229,13 +226,13 @@
 
             if (is_opponent == 'True') {
                 localStorage.setItem("opponent_selection", "spock")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "opponent_selection": "spock"
                 }))
             }
             if (is_creator == 'True') {
                 localStorage.setItem("creator_selection", "spock")
-                chatSocket.send(JSON.stringify({
+                gameSocket.send(JSON.stringify({
                     "creator_selection": "spock"
                 }))
             }
